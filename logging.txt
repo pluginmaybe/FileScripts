@@ -1,0 +1,6 @@
+
+Files found with identical length :
+571.257007 : C:\Coding\Python\FileScripts\TestVideo.mp4
+
+Validation log follows : 
+Comparing lengths of filesLogging results to logging.txt

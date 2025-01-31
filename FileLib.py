@@ -1,6 +1,12 @@
 import os
 import subprocess
 
+def get_file_details(file_to_check):
+  fileinfo = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file_to_check], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+  return float(fileinfo.stdout)
+
+
 def comparing_files(extension):
   curr_dir = os.getcwd()
 
@@ -23,7 +29,7 @@ def comparing_files(extension):
 
     return file_dict
   
-  def get_file_details(file_to_check):
-    fileinfo = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file_to_check], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+def write_text_to_file(filename, text):
+  with open(filename, 'w') as writer:
+    writer.write(text)
 
-    return float(fileinfo.stdout)
