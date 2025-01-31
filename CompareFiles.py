@@ -18,8 +18,17 @@
 # list the top n files by size
 import sys
 import FileLib
+from dataclasses import dataclass
 
-log_filename = "FileCompare.txt"
+@dataclass
+class Data:
+  compare_by_length: bool = False
+  same_directory: bool = False
+  list_largest: int = 0
+  log_results: bool = False
+  validation_log: str = ""
+  valid_arguments: bool = True
+  log_filename = "FileCompare.txt"
 
 def try_parse_valid_int(s):
   try:
@@ -28,19 +37,11 @@ def try_parse_valid_int(s):
     return 0
 
 def parse_arguments():
-  # Defaults
-  # TODO put into an object to make passing about easier
-  compare_by_length = False
-  same_directory = True
-  list_largest = 0
-  log_results = False
-  validation_log = ""
-  valid_arguments = True
-
   print(sys.argv)
   if len(sys.argv) <= 1:
     print("No arguments passed. ")
-    return compare_by_length, same_directory, list_largest, log_results, validation_log, valid_arguments
+    return
+    #return compare_by_length, same_directory, list_largest, log_results, validation_log, valid_arguments
   cl_commands = sys.argv[1:]
   #TODO delete - just for logging
   for item in cl_commands:
@@ -51,62 +52,62 @@ def parse_arguments():
 
     #TODO change to 'switch'-style ?
     if instruction == "-len":
-      compare_by_length = True
-      validation_log += "\nComparing lengths of files"
+      Data.compare_by_length = True
+      Data.validation_log += "\nComparing lengths of files"
 
     elif instruction == "-d":
-      same_directory = True
-      validation_log += "\nUsing same directory"
+      Data.same_directory = True
+      Data.validation_log += "\nUsing same directory"
 
     elif instruction == "-smax":
       if len(cl_commands) == 0:
-        validation_log += "\nno max number value input. Using default 10"
+        Data.validation_log += "\nno max number value input. Using default 10"
       else:
-        list_largest = try_parse_valid_int(cl_commands[0])
+        Data.list_largest = try_parse_valid_int(cl_commands[0])
         cl_commands.pop(0)
-        if list_largest <= 0:
-          validation_log += "\nInvalid number given"
+        if Data.list_largest <= 0:
+          Data.validation_log += "\nInvalid number given"
     
     elif instruction == "-log":
       #TODO add ability to edit file name
-      validation_log += f"Logging results to {log_filename}"
-      log_results = True
+      Data.validation_log += f"Logging results to {Data.log_filename}"
+      Data.log_results = True
 
     else:
-      valid_arguments = False
-      validation_log += f"\nError: Command {instruction} not found"
-
-  return compare_by_length, same_directory, list_largest, log_results, validation_log, valid_arguments
+      Data.valid_arguments = False
+      Data.validation_log += f"\nError: Command {instruction} not found"
 
 ##
       
 def main():
-  compare_by_length, same_directory, list_largest, log_results, validation_log, valid_args = parse_arguments()
+  parse_arguments()
   results = ""
   
-  if not valid_args:
-      results += f"\n\nValidation log follows : {validation_log}" 
+  if not Data.valid_arguments:
+      results += f"\n\nValidation log follows : {Data.validation_log}" 
       print(results)
       return
 
-  if compare_by_length:
+  if Data.compare_by_length:
     results += "\nFiles found with identical length :"
-    file_dict = FileLib.comparing_files(".mp4", same_directory)
+    file_dict = FileLib.comparing_files(".mp4", Data.same_directory)
     for (k,v) in file_dict.items():
+      if len(v) <= 1:
+        continue
       results += f"\n{k} :"
       for value in v:
         results += f"\n{value}"
     
-  if list_largest > 0:
-    results += f"\nThe largest {list_largest} files are :"
+  if Data.list_largest > 0:
+    results += f"\nThe largest {Data.list_largest} files are :"
     #TODO using results from above (compare by length) -> sort keys -> return top n results
     #results += get_largest_files(list_largest)
   
-  if validation_log != "":
-    results += f"\n\nValidation log follows : {validation_log}" 
+  if Data.validation_log != "":
+    results += f"\n\nValidation log follows : {Data.validation_log}" 
   
-  if log_results:
-    FileLib.write_text_to_file(log_filename, results)
+  if Data.log_results:
+    FileLib.write_text_to_file(Data.log_filename, results)
   print(results, "\n")
 
 ##

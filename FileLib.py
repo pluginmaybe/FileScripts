@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-# Helper functions for main script
+# Helper functions for main scripts
 
 def get_file_details(file_to_check):
   fileinfo = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file_to_check], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

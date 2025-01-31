@@ -12,7 +12,3 @@
 # PATH -r "root path to search from" (default is current)
 # -l "ReplaceLog.txt" <- output to a log file (default is "ReplaceLog.txt")
 
-"""
-
-
-"""
