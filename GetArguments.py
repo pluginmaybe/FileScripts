@@ -1,5 +1,7 @@
 import sys
 
+# Experimentation 
+
 arg = sys.argv
 
 def main():
@@ -8,9 +10,6 @@ def main():
     return 
   
   print(f"argument = {arg[1]}")
-
-          
-
 
 if __name__ == "__main__":
   main()

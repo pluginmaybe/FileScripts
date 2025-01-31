@@ -1,28 +1,25 @@
+# Compare Files Script
+
 # -len <- show files of the same length
 # -d <- only compare files in the same directory
 # -smax n <- show biggest n files in a directory (where n is an integer)
-
 # -log "log.txt" <- output results to a text file (default is "FileCompare.txt")
-
+# TODO add ability to change logfile text name
 ###
 # take input arguments, decode and validate
 
 # selected -> len function
-# make a dictionary with lengths being the key, and filedata the values
+# make a dictionary with lengths being the key, and list of filepaths the values
 # return keys that have more than one value
 # as 
-# key:
-#   file
-#   file
+# key: [file,.. file]
 
 # selected -> smax function
 # list the top n files by size
 import sys
-import os
-import subprocess
 import FileLib
 
-log_filename = "logging.txt"
+log_filename = "FileCompare.txt"
 
 def try_parse_valid_int(s):
   try:
@@ -32,16 +29,19 @@ def try_parse_valid_int(s):
 
 def parse_arguments():
   # Defaults
+  # TODO put into an object to make passing about easier
   compare_by_length = False
-  same_directory = False
+  same_directory = True
   list_largest = 0
   log_results = False
   validation_log = ""
+  valid_arguments = True
 
+  print(sys.argv)
   if len(sys.argv) <= 1:
     print("No arguments passed. ")
-    return
-  cl_commands = sys.argv[1:][0].split()
+    return compare_by_length, same_directory, list_largest, log_results, validation_log, valid_arguments
+  cl_commands = sys.argv[1:]
   #TODO delete - just for logging
   for item in cl_commands:
     print(f">> {item}")
@@ -73,32 +73,43 @@ def parse_arguments():
       log_results = True
 
     else:
+      valid_arguments = False
       validation_log += f"\nError: Command {instruction} not found"
 
-  return compare_by_length, same_directory, list_largest, log_results, validation_log
+  return compare_by_length, same_directory, list_largest, log_results, validation_log, valid_arguments
 
+##
       
 def main():
-  compare_by_length, same_directory, list_largest, log_results, validation_log = parse_arguments()
+  compare_by_length, same_directory, list_largest, log_results, validation_log, valid_args = parse_arguments()
   results = ""
   
+  if not valid_args:
+      results += f"\n\nValidation log follows : {validation_log}" 
+      print(results)
+      return
+
   if compare_by_length:
     results += "\nFiles found with identical length :"
-    file_dict = FileLib.comparing_files(".mp4")
+    file_dict = FileLib.comparing_files(".mp4", same_directory)
     for (k,v) in file_dict.items():
-      results += f"\n{v} : {k}"
-    #results += compare_file_lengths(same_directory)
+      results += f"\n{k} :"
+      for value in v:
+        results += f"\n{value}"
+    
   if list_largest > 0:
     results += f"\nThe largest {list_largest} files are :"
+    #TODO using results from above (compare by length) -> sort keys -> return top n results
     #results += get_largest_files(list_largest)
+  
   if validation_log != "":
     results += f"\n\nValidation log follows : {validation_log}" 
+  
   if log_results:
-    # logging_results_to_file()
     FileLib.write_text_to_file(log_filename, results)
   print(results, "\n")
 
-
+##
 
 if __name__ == "__main__":
   main()

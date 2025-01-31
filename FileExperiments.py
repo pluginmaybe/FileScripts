@@ -1,5 +1,7 @@
 import os
 
+# Room for testing and experimenting with code blocks
+
 dirs = os.scandir()
 
 for item in dirs:
